@@ -1,4 +1,4 @@
-// Types shared between client and server
+// Types shared between client and server (local copy for Vercel build)
 
 export type Priority = "High" | "Medium" | "Low";
 
@@ -6,10 +6,9 @@ export interface AssignmentInput {
   title: string;
   description: string;
   dueDate: string;
-  // Optional extra context
-  subject?: string;         // e.g. "History", "Maths", "Computer Science"
-  wordCount?: number;       // expected word count if it's a writing task
-  assignmentType?: string;  // e.g. "Essay", "Report", "Presentation", "Coding project"
+  subject?: string;
+  wordCount?: number;
+  assignmentType?: string;
 }
 
 export interface Task {
@@ -21,6 +20,7 @@ export interface Task {
 export interface ScheduleEntry {
   day: string;
   activity: string;
+  estimatedHours: number; // total hours allocated for this day
 }
 
 export interface StudyPlan {

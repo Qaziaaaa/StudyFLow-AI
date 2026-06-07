@@ -20,6 +20,7 @@ export interface Task {
 export interface ScheduleEntry {
   day: string;
   activity: string;
+  estimatedHours: number; // total hours allocated for this day
 }
 
 export interface StudyPlan {
