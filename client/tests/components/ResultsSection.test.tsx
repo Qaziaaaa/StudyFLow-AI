@@ -3,29 +3,27 @@ import { describe, it, expect } from "vitest";
 import { ResultsSection } from "../../src/components/ResultsSection";
 import type { StudyPlan } from "@studyflow/shared";
 
-// ── Fixtures ──────────────────────────────────────────────────────────────────
-
 const mockPlan: StudyPlan = {
   summary: "A comprehensive study plan for your history essay.",
   difficulty: "Medium",
   priority: "High",
   tasks: [
-    { name: "[ Research ] Find sources on WW2", estimatedHours: 1, difficulty: "Easy" },
-    { name: "[ Draft ] Write outline", estimatedHours: 0.5, difficulty: "Medium" },
-    { name: "[ Draft ] Write essay body", estimatedHours: 1.5, difficulty: "Hard" },
+    { name: "[ Research ] Find sources on WW2",  estimatedHours: 1,   difficulty: "Easy"   },
+    { name: "[ Draft ] Write outline",            estimatedHours: 0.5, difficulty: "Medium" },
+    { name: "[ Draft ] Write essay body",         estimatedHours: 1.5, difficulty: "Hard"   },
   ],
   schedule: [
-    { day: "Day 1", activity: "Find sources on WW2", estimatedHours: 1 },
-    { day: "Day 2", activity: "Write outline", estimatedHours: 0.5 },
-    { day: "Day 3", activity: "Write essay body", estimatedHours: 1.5 },
-    { day: "Day 4", activity: "Final review, polish, and submit ✓", estimatedHours: 1 },
+    { day: "Day 1", tasks: ["Find sources on WW2"],          estimatedHours: 1   },
+    { day: "Day 2", tasks: ["Write outline"],                 estimatedHours: 0.5 },
+    { day: "Day 3", tasks: ["Write essay body"],              estimatedHours: 1.5 },
+    { day: "Day 4", tasks: [], estimatedHours: 1, label: "Final review, polish, and submit" },
   ],
 };
 
-const lowPriorityPlan: StudyPlan = { ...mockPlan, priority: "Low",   difficulty: "Easy" };
+const lowPriorityPlan:    StudyPlan = { ...mockPlan, priority: "Low",    difficulty: "Easy" };
 const mediumPriorityPlan: StudyPlan = { ...mockPlan, priority: "Medium", difficulty: "Hard" };
 
-// ── Visibility ────────────────────────────────────────────────────────────────
+// ── Visibility ───────────────────────────────────────────────────────────────
 
 describe("ResultsSection – visibility", () => {
   it("renders nothing when visible=false", () => {
@@ -49,7 +47,7 @@ describe("ResultsSection – visibility", () => {
   });
 });
 
-// ── Error state ───────────────────────────────────────────────────────────────
+// ── Error state ──────────────────────────────────────────────────────────────
 
 describe("ResultsSection – error state", () => {
   it("displays the error message text", () => {
@@ -57,14 +55,14 @@ describe("ResultsSection – error state", () => {
     expect(screen.getByText("Groq API error")).toBeInTheDocument();
   });
 
-  it("shows error instead of plan when both error and plan are provided", () => {
+  it("shows error instead of plan when both provided", () => {
     render(<ResultsSection plan={mockPlan} error="Some error" visible={true} />);
     expect(screen.getByText("Some error")).toBeInTheDocument();
     expect(screen.queryByLabelText(/study plan results/i)).not.toBeInTheDocument();
   });
 });
 
-// ── Plan content ──────────────────────────────────────────────────────────────
+// ── Plan content ─────────────────────────────────────────────────────────────
 
 describe("ResultsSection – plan content", () => {
   it("displays the assignment summary", () => {
@@ -72,11 +70,11 @@ describe("ResultsSection – plan content", () => {
     expect(screen.getByText("A comprehensive study plan for your history essay.")).toBeInTheDocument();
   });
 
-  it("displays each task name", () => {
+  it("displays task names (with phase stripped) in the task breakdown", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
-    expect(screen.getByText("Find sources on WW2")).toBeInTheDocument();
-    expect(screen.getByText("Write outline")).toBeInTheDocument();
-    expect(screen.getByText("Write essay body")).toBeInTheDocument();
+    expect(screen.getAllByText("Find sources on WW2").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Write outline").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Write essay body").length).toBeGreaterThanOrEqual(1);
   });
 
   it("displays task difficulty badges", () => {
@@ -104,7 +102,7 @@ describe("ResultsSection – priority badge", () => {
     expect(badge.className).toMatch(/red/);
   });
 
-  it("shows Medium priority with amber/yellow styling", () => {
+  it("shows Medium priority with amber styling", () => {
     render(<ResultsSection plan={mediumPriorityPlan} error={null} visible={true} />);
     const badge = screen.getByLabelText(/priority: medium/i);
     expect(badge).toBeInTheDocument();
@@ -122,12 +120,12 @@ describe("ResultsSection – priority badge", () => {
 // ── Schedule ──────────────────────────────────────────────────────────────────
 
 describe("ResultsSection – schedule", () => {
-  it("renders the schedule section heading", () => {
+  it("renders the schedule section", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
     expect(screen.getByLabelText(/day-by-day schedule/i)).toBeInTheDocument();
   });
 
-  it("renders all schedule day labels in order", () => {
+  it("renders all day labels in order", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
     expect(screen.getByText("Day 1")).toBeInTheDocument();
     expect(screen.getByText("Day 2")).toBeInTheDocument();
@@ -135,60 +133,57 @@ describe("ResultsSection – schedule", () => {
     expect(screen.getByText("Day 4")).toBeInTheDocument();
   });
 
-  it("renders activity text for each day", () => {
+  it("renders task names inside the schedule", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
     expect(screen.getAllByText(/find sources on ww2/i).length).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows estimated hours on days that have work", () => {
+  it("shows time for days with work", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
-    // Day 1 has 1 hr
     expect(screen.getAllByText("1 hr").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows buffer text for empty activity days", () => {
+  it("shows buffer text for days with no tasks", () => {
     const planWithBuffer: StudyPlan = {
       ...mockPlan,
       schedule: [
-        { day: "Day 1", activity: "Find sources", estimatedHours: 1 },
-        { day: "Day 2", activity: "", estimatedHours: 0 },
+        { day: "Day 1", tasks: ["Find sources"], estimatedHours: 1 },
+        { day: "Day 2", tasks: [], estimatedHours: 0, label: "Review & catch up on previous tasks" },
       ],
     };
     render(<ResultsSection plan={planWithBuffer} error={null} visible={true} />);
-    expect(screen.getByText(/buffer day/i)).toBeInTheDocument();
+    expect(screen.getByText(/review & catch up/i)).toBeInTheDocument();
   });
 });
 
 // ── Phase tags ────────────────────────────────────────────────────────────────
 
 describe("ResultsSection – phase tags", () => {
-  it("renders phase tags extracted from task names", () => {
+  it("renders Research phase tag", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
-    const researchTags = screen.getAllByText("Research");
-    expect(researchTags.length).toBeGreaterThanOrEqual(1);
-    const draftTags = screen.getAllByText("Draft");
-    expect(draftTags.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Research").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders Draft phase tag", () => {
+    render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
+    expect(screen.getAllByText("Draft").length).toBeGreaterThanOrEqual(1);
   });
 });
 
 // ── DOM order ─────────────────────────────────────────────────────────────────
 
 describe("ResultsSection – DOM order", () => {
-  it("overview section appears before schedule section", () => {
+  it("overview section appears before schedule", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
     const overview = screen.getByLabelText(/study plan results/i);
     const schedule = screen.getByLabelText(/day-by-day schedule/i);
-    expect(
-      overview.compareDocumentPosition(schedule) & Node.DOCUMENT_POSITION_FOLLOWING
-    ).toBeTruthy();
+    expect(overview.compareDocumentPosition(schedule) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it("schedule section appears before task breakdown section", () => {
+  it("schedule appears before task breakdown", () => {
     render(<ResultsSection plan={mockPlan} error={null} visible={true} />);
     const schedule = screen.getByLabelText(/day-by-day schedule/i);
     const tasks = screen.getByLabelText(/task breakdown/i);
-    expect(
-      schedule.compareDocumentPosition(tasks) & Node.DOCUMENT_POSITION_FOLLOWING
-    ).toBeTruthy();
+    expect(schedule.compareDocumentPosition(tasks) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

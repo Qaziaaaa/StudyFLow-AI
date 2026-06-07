@@ -12,12 +12,21 @@ function roundHalf(n: number): number {
   return Math.round(n * 2) / 2;
 }
 
+/** Strip [ Phase ] prefix from task names for clean display */
+function cleanTaskName(name: string): string {
+  return name.replace(/^\[\s*[^\]]+\s*\]\s*/, "").trim();
+}
+
 /**
- * Builds a day-by-day schedule that:
- * 1. Distributes tasks evenly across ALL available days (no empty "rest" days unless
- *    there's genuinely nothing left to do on that day — last day is always review/submit).
- * 2. Attaches an estimatedHours value to each day so students know how long to sit.
- * 3. Never leaves more than 1 buffer/rest day at the end.
+ * Builds a structured day-by-day schedule.
+ * Each day entry has a `tasks` array (not a joined string) so the UI can
+ * render each task as its own line item.
+ *
+ * Rules:
+ * - Last day is always "Final review & submit"
+ * - When tasks > work days: chunk tasks evenly, every work day has ≥1 task
+ * - When tasks < work days: one task per day, evenly spaced, gaps are buffer days
+ * - Same day: all tasks on Day 1
  */
 export function buildSchedule(
   tasks: Task[],
@@ -26,31 +35,31 @@ export function buildSchedule(
 ): ScheduleEntry[] {
   const numDays = computeNumDays(dueDate, today);
 
+  // ── No tasks ──
   if (tasks.length === 0) {
     return Array.from({ length: numDays }, (_, i) => ({
       day: `Day ${i + 1}`,
-      activity: i === numDays - 1 ? "Final review and submission" : "",
-      estimatedHours: 0,
+      tasks: [],
+      estimatedHours: i === numDays - 1 ? 1 : 0,
+      label: i === numDays - 1 ? "Final review and submission" : "Buffer day",
     }));
   }
 
-  // --- Same day ---
+  // ── Same day ──
   if (numDays === 1) {
-    const totalHours = tasks.reduce((s, t) => s + t.estimatedHours, 0);
     return [{
       day: "Day 1",
-      activity: tasks.map(t => t.name).join(" → "),
-      estimatedHours: roundHalf(totalHours),
+      tasks: tasks.map(t => cleanTaskName(t.name)),
+      estimatedHours: roundHalf(tasks.reduce((s, t) => s + t.estimatedHours, 0)),
     }];
   }
 
-  // --- Reserve the last day for review/submission ---
-  // Work days = all days except last
+  // Work days = everything except the last (reserved for review/submit)
   const workDays = numDays - 1;
   const entries: ScheduleEntry[] = [];
 
   if (tasks.length >= workDays) {
-    // More tasks than work days — chunk them
+    // More tasks than work days — chunk evenly, every day gets ≥1 task
     const floor = Math.floor(tasks.length / workDays);
     const remainder = tasks.length % workDays;
     let idx = 0;
@@ -58,51 +67,47 @@ export function buildSchedule(
       const chunkSize = i < remainder ? floor + 1 : floor;
       const chunk = tasks.slice(idx, idx + chunkSize);
       idx += chunkSize;
-      const dayHours = roundHalf(chunk.reduce((s, t) => s + t.estimatedHours, 0));
       entries.push({
         day: `Day ${i + 1}`,
-        activity: chunk.map(t => t.name).join(" + "),
-        estimatedHours: dayHours,
+        tasks: chunk.map(t => cleanTaskName(t.name)),
+        estimatedHours: roundHalf(chunk.reduce((s, t) => s + t.estimatedHours, 0)),
       });
     }
   } else {
-    // Fewer tasks than work days — spread them out, insert buffer days intelligently
-    // Strategy: distribute tasks evenly with gaps, don't bunch all empties at end
-    const gap = workDays / tasks.length; // float spacing between tasks
+    // Fewer tasks than work days — space them out evenly
+    const gap = workDays / tasks.length;
     const assigned = new Set<number>();
 
     tasks.forEach((task, ti) => {
-      // Place task at evenly spaced intervals
-      const dayIndex = Math.min(Math.round(ti * gap), workDays - 1);
-      // Avoid collision — find next free slot
-      let slot = dayIndex;
+      let slot = Math.min(Math.round(ti * gap), workDays - 1);
       while (assigned.has(slot) && slot < workDays - 1) slot++;
       assigned.add(slot);
-
       entries[slot] = {
         day: `Day ${slot + 1}`,
-        activity: task.name,
+        tasks: [cleanTaskName(task.name)],
         estimatedHours: roundHalf(task.estimatedHours),
       };
     });
 
-    // Fill gaps with buffer entries
+    // Fill gaps with buffer days
     for (let i = 0; i < workDays; i++) {
       if (!entries[i]) {
         entries[i] = {
           day: `Day ${i + 1}`,
-          activity: "Review progress · catch up on previous tasks",
-          estimatedHours: 0.5,
+          tasks: [],
+          estimatedHours: 0,
+          label: "Review & catch up on previous tasks",
         };
       }
     }
   }
 
-  // Last day is always final review / submission
+  // Final day — always review & submit
   entries.push({
     day: `Day ${numDays}`,
-    activity: "Final review, polish, and submit ✓",
+    tasks: [],
     estimatedHours: 1,
+    label: "Final review, polish, and submit",
   });
 
   return entries;

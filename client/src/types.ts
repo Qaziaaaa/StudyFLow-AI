@@ -19,8 +19,11 @@ export interface Task {
 
 export interface ScheduleEntry {
   day: string;
-  activity: string;
-  estimatedHours: number; // total hours allocated for this day
+  /** List of task names assigned to this day (empty array = buffer/rest day) */
+  tasks: string[];
+  estimatedHours: number;
+  /** Optional label override for special days like "Final review" */
+  label?: string;
 }
 
 export interface StudyPlan {
