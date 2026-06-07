@@ -15,11 +15,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"],
     "paths": {
-      "@studyflow/shared": ["../shared/types.ts"]
+      "@studyflow/shared": ["./src/types.ts"]
     },
     "baseUrl": "."
   },
-  "include": ["src/**/*", "tests/**/*", "../shared/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules"]
 }

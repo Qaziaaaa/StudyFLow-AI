@@ -2,17 +2,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// VITE_API_URL is set in Vercel's environment variables to point at the
-// Render backend, e.g. https://studyflow-ai-api.onrender.com
-// During local dev it is left unset so the built-in proxy is used instead.
 export default defineConfig(({ command }) => ({
   plugins: [react()],
   resolve: {
     alias: {
-      "@studyflow/shared": path.resolve(__dirname, "../shared/types.ts"),
+      // Points to the local copy so Vercel's isolated build works
+      "@studyflow/shared": path.resolve(__dirname, "src/types.ts"),
     },
   },
-  // Proxy only applies during `vite dev` (local development)
   server:
     command === "serve"
       ? {

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@studyflow/shared": path.resolve(__dirname, "../shared/types.ts"),
+      "@studyflow/shared": path.resolve(__dirname, "src/types.ts"),
     },
   },
 });
