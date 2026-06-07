@@ -22,7 +22,6 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-
       if (res.ok) {
         const json = await res.json();
         setPlan(json.studyPlan as StudyPlan);
@@ -38,27 +37,43 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #f0f4ff 0%, #f1f5f9 50%, #eef2ff 100%)" }}>
+
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
+      <header className="sticky top-0 z-50" style={{
+        background: "rgba(255,255,255,0.85)",
+        backdropFilter: "blur(12px)",
+        borderBottom: "1px solid rgba(148,163,184,0.2)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)"
+      }}>
+        <div className="max-w-2xl mx-auto px-6 py-3.5 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #4f46e5, #6366f1)", boxShadow: "0 2px 8px rgba(79,70,229,0.35)" }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
             </svg>
           </div>
-          <span className="text-lg font-bold text-navy-800 tracking-tight">StudyFlow AI</span>
+          <div>
+            <span className="text-base font-800 tracking-tight text-slate-900" style={{ fontWeight: 800 }}>StudyFlow AI</span>
+          </div>
+          <div className="ml-auto">
+            <span className="badge badge-brand text-xs">AI-Powered</span>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-8 space-y-5">
-        <div>
-          <h1 className="text-2xl font-bold text-navy-800">Generate your study plan</h1>
-          <p className="text-slate-500 mt-1 text-sm">
-            Tell us about your assignment and we'll build a practical, step-by-step plan.
-          </p>
-        </div>
+      {/* Hero */}
+      <div className="max-w-2xl mx-auto px-6 pt-8 pb-2">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Generate your study plan</h1>
+        <p className="text-slate-500 mt-1 text-sm leading-relaxed">
+          Describe your assignment and get a personalised, step-by-step plan — from first task to final submission.
+        </p>
+      </div>
 
+      {/* Main */}
+      <main className="max-w-2xl mx-auto px-6 pb-16 space-y-5 pt-4">
         <AssignmentForm onSubmit={handleSubmit} isLoading={isLoading} />
         <LoadingIndicator visible={isLoading} />
         <ResultsSection plan={plan} error={error} visible={resultsVisible} />

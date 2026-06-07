@@ -6,18 +6,6 @@ export interface ResultsSectionProps {
   visible: boolean;
 }
 
-const priorityStyles: Record<StudyPlan["priority"], { pill: string; dot: string; label: string }> = {
-  High:   { pill: "bg-red-50 text-red-700 border-red-200",       dot: "bg-red-500",    label: "High — due very soon"    },
-  Medium: { pill: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400",  label: "Medium — plan ahead"     },
-  Low:    { pill: "bg-green-50 text-green-700 border-green-200", dot: "bg-green-500",  label: "Low — plenty of time"    },
-};
-
-const difficultyStyles: Record<StudyPlan["difficulty"], string> = {
-  Easy:   "bg-sky-50 text-sky-700 border-sky-200",
-  Medium: "bg-amber-50 text-amber-700 border-amber-200",
-  Hard:   "bg-purple-50 text-purple-700 border-purple-200",
-};
-
 function formatHours(h: number): string {
   if (!h || h <= 0) return "—";
   if (h < 1) return `${Math.round(h * 60)} min`;
@@ -28,62 +16,61 @@ function formatHours(h: number): string {
   return mins > 0 ? `${whole}h ${mins}m` : `${whole} hrs`;
 }
 
-/** Parse a phase label like "[ Build ] Set up server" → { phase: "Build", rest: "Set up server" } */
 function parsePhase(name: string): { phase: string | null; task: string } {
   const match = name.match(/^\[\s*([^\]]+)\s*\]\s*(.+)/);
   if (match) return { phase: match[1].trim(), task: match[2].trim() };
   return { phase: null, task: name };
 }
 
-const phaseColors: Record<string, string> = {
-  Planning:    "bg-violet-100 text-violet-700",
-  Setup:       "bg-slate-100 text-slate-600",
-  Database:    "bg-blue-100 text-blue-700",
-  Backend:     "bg-indigo-100 text-indigo-700",
-  Frontend:    "bg-cyan-100 text-cyan-700",
-  Auth:        "bg-orange-100 text-orange-700",
-  Testing:     "bg-yellow-100 text-yellow-700",
-  Deploy:      "bg-green-100 text-green-700",
-  Docs:        "bg-teal-100 text-teal-700",
-  Understand:  "bg-sky-100 text-sky-700",
-  Research:    "bg-blue-100 text-blue-700",
-  Plan:        "bg-violet-100 text-violet-700",
-  Draft:       "bg-indigo-100 text-indigo-700",
-  Edit:        "bg-amber-100 text-amber-700",
-  Submit:      "bg-green-100 text-green-700",
-  Structure:   "bg-violet-100 text-violet-700",
-  Build:       "bg-indigo-100 text-indigo-700",
-  Design:      "bg-pink-100 text-pink-700",
-  Rehearse:    "bg-orange-100 text-orange-700",
-  Deliver:     "bg-green-100 text-green-700",
-  Analyse:     "bg-cyan-100 text-cyan-700",
-  Write:       "bg-indigo-100 text-indigo-700",
-  Review:      "bg-amber-100 text-amber-700",
+// Phase → color token
+const PHASE_COLORS: Record<string, { bg: string; text: string }> = {
+  Planning:   { bg: "#f3f0ff", text: "#7c3aed" },
+  Setup:      { bg: "#f0f9ff", text: "#0369a1" },
+  Database:   { bg: "#eff6ff", text: "#1d4ed8" },
+  Backend:    { bg: "#eef2ff", text: "#4338ca" },
+  Frontend:   { bg: "#ecfeff", text: "#0e7490" },
+  Auth:       { bg: "#fff7ed", text: "#c2410c" },
+  Testing:    { bg: "#fefce8", text: "#a16207" },
+  Deploy:     { bg: "#f0fdf4", text: "#15803d" },
+  Docs:       { bg: "#f0fdfa", text: "#0f766e" },
+  Understand: { bg: "#f0f9ff", text: "#0369a1" },
+  Research:   { bg: "#eff6ff", text: "#1d4ed8" },
+  Plan:       { bg: "#f3f0ff", text: "#7c3aed" },
+  Draft:      { bg: "#eef2ff", text: "#4338ca" },
+  Edit:       { bg: "#fff7ed", text: "#c2410c" },
+  Submit:     { bg: "#f0fdf4", text: "#15803d" },
+  Structure:  { bg: "#f3f0ff", text: "#7c3aed" },
+  Build:      { bg: "#eef2ff", text: "#4338ca" },
+  Design:     { bg: "#fdf4ff", text: "#9333ea" },
+  Rehearse:   { bg: "#fff7ed", text: "#c2410c" },
+  Deliver:    { bg: "#f0fdf4", text: "#15803d" },
+  Analyse:    { bg: "#ecfeff", text: "#0e7490" },
+  Write:      { bg: "#eef2ff", text: "#4338ca" },
+  Review:     { bg: "#fefce8", text: "#a16207" },
 };
 
-function phaseColor(phase: string | null): string {
-  if (!phase) return "bg-slate-100 text-slate-600";
-  return phaseColors[phase] ?? "bg-brand-100 text-brand-700";
+function phaseStyle(phase: string | null) {
+  if (!phase) return { bg: "#f8fafc", text: "#475569" };
+  return PHASE_COLORS[phase] ?? { bg: "#eef2ff", text: "#4338ca" };
 }
-
-const card = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden";
-const sectionLabel = "text-xs font-semibold uppercase tracking-widest text-slate-400";
 
 export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
   if (!visible) return null;
 
+  // ── Error ──
   if (error) {
     return (
-      <div className={`${card} p-6 flex items-start gap-4`} aria-label="Study plan error">
-        <div className="w-9 h-9 rounded-full bg-red-50 border border-red-200 flex items-center justify-center flex-shrink-0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-            <circle cx="12" cy="16" r="0.5" fill="#ef4444"/>
+      <div className="card p-5 flex items-start gap-4" aria-label="Study plan error"
+        style={{ borderLeft: "3px solid #ef4444" }}>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="#dc2626"/>
           </svg>
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-800">Couldn't generate study plan</p>
-          <p className="text-sm text-slate-500 mt-1">{error}</p>
+          <p className="text-sm text-slate-500 mt-1 leading-relaxed">{error}</p>
         </div>
       </div>
     );
@@ -91,147 +78,200 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
 
   if (!plan) return null;
 
-  const pri = priorityStyles[plan.priority];
   const totalHrs = plan.tasks.reduce((s, t) => s + t.estimatedHours, 0);
   const activeDays = plan.schedule.filter(e => e.estimatedHours > 0).length;
-  const avgHrsPerDay = activeDays > 0 ? totalHrs / activeDays : 0;
+  const avgHrsPerDay = activeDays > 0 ? Math.round((totalHrs / activeDays) * 2) / 2 : 0;
+
+  const priorityConfig = {
+    High:   { cls: "badge-priority-high",   icon: "🔴", label: "High Priority",   hint: "Due very soon — start today" },
+    Medium: { cls: "badge-priority-medium", icon: "🟡", label: "Medium Priority", hint: "Plan ahead, stay consistent" },
+    Low:    { cls: "badge-priority-low",    icon: "🟢", label: "Low Priority",    hint: "Plenty of time — stay steady" },
+  }[plan.priority];
+
+  const diffCls = { Easy: "badge-diff-easy", Medium: "badge-diff-medium", Hard: "badge-diff-hard" }[plan.difficulty];
 
   return (
     <div className="space-y-4" aria-label="Study plan results">
 
-      {/* ── Overview ── */}
-      <div className={`${card} p-6`}>
-        <p className={`${sectionLabel} mb-3`}>Overview</p>
+      {/* ══ OVERVIEW CARD ══ */}
+      <div className="card-elevated overflow-hidden">
+        {/* Gradient top strip */}
+        <div className="h-1" style={{ background: "linear-gradient(90deg, #4f46e5, #818cf8, #6366f1)" }} />
 
-        <div className="flex flex-wrap gap-2 mb-4">
-          <span aria-label={`Priority: ${plan.priority}`}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${pri.pill}`}>
-            <span className={`w-2 h-2 rounded-full ${pri.dot}`} />
-            {pri.label}
-          </span>
-          <span aria-label={`Overall difficulty: ${plan.difficulty}`}
-            className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${difficultyStyles[plan.difficulty]}`}>
-            {plan.difficulty} difficulty
-          </span>
-          <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
-            {formatHours(totalHrs)} total · {plan.tasks.length} tasks
-          </span>
-        </div>
-
-        <p className="text-sm text-slate-600 leading-relaxed">{plan.summary}</p>
-
-        {/* Daily commitment summary */}
-        {activeDays > 0 && (
-          <div className="mt-4 flex items-center gap-3 bg-brand-50 border border-brand-100 rounded-xl px-4 py-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <p className="text-xs text-brand-700 font-medium">
-              Spread across <strong>{activeDays} study days</strong> — roughly{" "}
-              <strong>{formatHours(Math.round(avgHrsPerDay * 2) / 2)} per day</strong> on average to finish on time.
-            </p>
+        <div className="px-6 py-5">
+          {/* Title row */}
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Your Study Plan</p>
+              <h2 className="text-base font-bold text-slate-900">Overview</h2>
+            </div>
+            <span className={`badge ${priorityConfig.cls}`}>
+              {priorityConfig.icon} {priorityConfig.label}
+            </span>
           </div>
-        )}
+
+          {/* Summary */}
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">{plan.summary}</p>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            {[
+              { label: "Total time", value: formatHours(totalHrs), icon: "⏱" },
+              { label: "Tasks", value: String(plan.tasks.length), icon: "✅" },
+              { label: "Avg / day", value: activeDays > 0 ? formatHours(avgHrsPerDay) : "—", icon: "📅" },
+            ].map(stat => (
+              <div key={stat.label} className="rounded-xl p-3 text-center"
+                style={{ background: "#f8fafc", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div className="text-lg mb-0.5">{stat.icon}</div>
+                <div className="text-base font-bold text-slate-900">{stat.value}</div>
+                <div className="text-xs text-slate-400 mt-0.5">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Badge row */}
+          <div className="flex flex-wrap gap-2">
+            <span aria-label={`Overall difficulty: ${plan.difficulty}`} className={`badge ${diffCls}`}>
+              {plan.difficulty} difficulty
+            </span>
+            <span className="badge badge-neutral">{priorityConfig.hint}</span>
+          </div>
+        </div>
       </div>
 
-      {/* ── Day-by-Day Schedule ── */}
-      <div className={card} aria-label="Day-by-Day Schedule">
-        <div className="px-6 pt-5 pb-4 border-b border-slate-100">
-          <p className={`${sectionLabel} mb-1`}>Day-by-Day Schedule</p>
-          <h2 className="text-base font-semibold text-navy-800">What to work on — and for how long</h2>
-          <p className="text-xs text-slate-400 mt-0.5">Time shown is your daily study commitment</p>
+      {/* ══ SCHEDULE CARD ══ */}
+      <div className="card-elevated overflow-hidden" aria-label="Day-by-Day Schedule">
+        {/* Header */}
+        <div className="px-6 py-4" style={{ borderBottom: "1px solid #f1f5f9" }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ background: "#eef2ff", border: "1px solid #c7d2fe" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Day-by-Day Schedule</h2>
+              <p className="text-xs text-slate-400">What to do each day — and how long it takes</p>
+            </div>
+          </div>
         </div>
 
-        <div className="divide-y divide-slate-100">
+        {/* Timeline */}
+        <div className="px-6 py-4 space-y-2">
           {plan.schedule.map((entry, i) => {
-            const isToday = i === 0;
+            const isFirst = i === 0;
             const isLast = i === plan.schedule.length - 1;
             const hasWork = entry.estimatedHours > 0;
 
             return (
-              <div key={entry.day} className={`flex items-start gap-4 px-6 py-4 ${isToday ? "bg-brand-50/50" : ""}`}>
+              <div key={entry.day}
+                className="flex items-start gap-3 rounded-xl p-3 transition-colors"
+                style={{
+                  background: isFirst ? "#f5f7ff" : isLast ? "#f0fdf4" : "#fafafa",
+                  border: isFirst ? "1px solid #c7d2fe" : isLast ? "1px solid #bbf7d0" : "1px solid #f1f5f9",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.03)"
+                }}>
+
                 {/* Day circle */}
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                  isToday ? "bg-brand-600 text-white" :
-                  isLast  ? "bg-green-500 text-white" :
-                  hasWork ? "bg-slate-800 text-white" :
-                            "bg-slate-100 text-slate-400"
-                }`}>
+                <div className="timeline-dot flex-shrink-0"
+                  style={{
+                    background: isFirst ? "linear-gradient(135deg,#4f46e5,#6366f1)"
+                               : isLast  ? "linear-gradient(135deg,#16a34a,#22c55e)"
+                               : hasWork ? "#1e293b"
+                               : "#e2e8f0",
+                    color: (isFirst || isLast || hasWork) ? "#fff" : "#94a3b8",
+                    fontSize: isLast ? "14px" : "12px"
+                  }}>
                   {isLast ? "✓" : i + 1}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  {/* Day label + time badge on same row */}
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                    <span className="text-xs font-semibold uppercase tracking-wide"
+                      style={{ color: isFirst ? "#4338ca" : isLast ? "#15803d" : "#94a3b8" }}>
                       {entry.day}
                     </span>
-                    {hasWork && (
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                        isToday
-                          ? "bg-brand-600 text-white border-brand-600"
-                          : isLast
-                          ? "bg-green-50 text-green-700 border-green-200"
-                          : "bg-slate-100 text-slate-600 border-slate-200"
-                      }`}>
-                        {formatHours(entry.estimatedHours)}
-                      </span>
-                    )}
-                    {isToday && (
-                      <span className="text-xs font-semibold text-brand-600 bg-brand-50 border border-brand-200 rounded-full px-2 py-0.5">
-                        Start today
-                      </span>
-                    )}
+                    {isFirst && <span className="badge" style={{ background:"#4f46e5", color:"#fff", borderColor:"#4f46e5", fontSize:"0.6rem", padding:"2px 7px" }}>Start today</span>}
+                    {isLast && <span className="badge badge-success" style={{ fontSize:"0.6rem", padding:"2px 7px" }}>Submit</span>}
                   </div>
-
-                  {/* Activity */}
-                  <p className={`text-sm leading-snug ${
-                    hasWork || isLast ? "text-slate-800 font-medium" : "text-slate-400 italic"
-                  }`}>
+                  <p className="text-sm leading-snug"
+                    style={{ color: hasWork || isLast ? "#0f172a" : "#94a3b8", fontStyle: hasWork || isLast ? "normal" : "italic" }}>
                     {entry.activity || "Buffer day — catch up if needed"}
                   </p>
                 </div>
+
+                {/* Time badge */}
+                {hasWork && (
+                  <span className="badge badge-time flex-shrink-0 font-bold"
+                    style={{
+                      background: isFirst ? "#eef2ff" : isLast ? "#f0fdf4" : "#f8fafc",
+                      color: isFirst ? "#4338ca" : isLast ? "#15803d" : "#475569",
+                      borderColor: isFirst ? "#c7d2fe" : isLast ? "#bbf7d0" : "#e2e8f0",
+                    }}>
+                    ⏱ {formatHours(entry.estimatedHours)}
+                  </span>
+                )}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* ── Task Breakdown ── */}
-      <div className={card} aria-label="Task Breakdown">
-        <div className="px-6 pt-5 pb-4 border-b border-slate-100">
-          <p className={`${sectionLabel} mb-1`}>Full Task Breakdown</p>
-          <h2 className="text-base font-semibold text-navy-800">Every step from start to finish</h2>
+      {/* ══ TASKS CARD ══ */}
+      <div className="card-elevated overflow-hidden" aria-label="Task Breakdown">
+        {/* Header */}
+        <div className="px-6 py-4" style={{ borderBottom: "1px solid #f1f5f9" }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">Full Task Breakdown</h2>
+              <p className="text-xs text-slate-400">Every step from start to final submission</p>
+            </div>
+            <div className="ml-auto">
+              <span className="badge badge-neutral">{plan.tasks.length} tasks</span>
+            </div>
+          </div>
         </div>
 
-        <ul className="divide-y divide-slate-100">
+        {/* Tasks list */}
+        <ul className="px-4 py-3 space-y-2">
           {plan.tasks.map((task, i) => {
             const { phase, task: taskName } = parsePhase(task.name);
+            const ps = phaseStyle(phase);
+            const diffCls2 = { Easy: "badge-diff-easy", Medium: "badge-diff-medium", Hard: "badge-diff-hard" }[task.difficulty];
+
             return (
-              <li key={`${task.name}-${i}`} className="flex items-start gap-3 px-6 py-4">
+              <li key={`${task.name}-${i}`}
+                className="flex items-start gap-3 rounded-xl p-3.5 transition-colors hover:bg-slate-50"
+                style={{ border: "1px solid #f1f5f9", boxShadow: "0 1px 2px rgba(0,0,0,0.03)" }}>
+
                 {/* Step number */}
-                <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
+                  style={{ background: "#f1f5f9", color: "#475569", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
                   {i + 1}
-                </span>
+                </div>
 
                 <div className="flex-1 min-w-0">
                   {/* Phase tag */}
                   {phase && (
-                    <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-md mb-1 ${phaseColor(phase)}`}>
+                    <span className="phase-pill mb-1.5 inline-block"
+                      style={{ background: ps.bg, color: ps.text }}>
                       {phase}
                     </span>
                   )}
-                  {/* Task name */}
                   <p className="text-sm font-medium text-slate-800 leading-snug">{taskName}</p>
                 </div>
 
-                {/* Time + difficulty */}
-                <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                  <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
-                    {formatHours(task.estimatedHours)}
-                  </span>
-                  <span aria-label={`Task difficulty: ${task.difficulty}`}
-                    className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${difficultyStyles[task.difficulty]}`}>
+                {/* Meta */}
+                <div className="flex flex-col items-end gap-1.5 flex-shrink-0 ml-2">
+                  <span className="badge badge-time font-semibold">{formatHours(task.estimatedHours)}</span>
+                  <span aria-label={`Task difficulty: ${task.difficulty}`} className={`badge ${diffCls2}`}>
                     {task.difficulty}
                   </span>
                 </div>
@@ -239,6 +279,13 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
             );
           })}
         </ul>
+
+        {/* Footer total */}
+        <div className="mx-4 mb-4 px-4 py-3 rounded-xl flex items-center justify-between"
+          style={{ background: "#fafbff", border: "1px solid #e0e7ff" }}>
+          <span className="text-xs font-semibold text-slate-500">Total estimated time</span>
+          <span className="text-sm font-bold text-indigo-700">{formatHours(totalHrs)}</span>
+        </div>
       </div>
 
     </div>
