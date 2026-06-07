@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StudyFlow AI - Assignment Input</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .lifted-shadow {
+            box-shadow: -5px -5px 10px #FFFFFF, 5px 5px 15px rgba(249, 115, 22, 0.08);
+        }
+        .recessed-shadow {
+            box-shadow: inset -5px -5px 10px #FFFFFF, inset 5px 5px 15px rgba(249, 115, 22, 0.08);
+        }
+        .recessed-input {
+            box-shadow: inset 2px 2px 5px rgba(249, 115, 22, 0.05), inset -2px -2px 5px #FFFFFF;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#9d4300",
+                        "on-surface-variant": "#584237",
+                        "surface": "#f8f9ff",
+                        "on-primary-container": "#582200",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "surface-container-low": "#eff4ff",
+                        "outline-variant": "#e0c0b1",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-tertiary-fixed-variant": "#7c2d12",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary": "#855300",
+                        "primary-fixed": "#ffdbca",
+                        "on-background": "#0b1c30",
+                        "outline": "#8c7164",
+                        "on-primary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#783200",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#ffb690",
+                        "on-tertiary-container": "#611901",
+                        "inverse-surface": "#213145",
+                        "surface-dim": "#cbdbf5",
+                        "primary-fixed-dim": "#ffb690",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "tertiary": "#9b4427",
+                        "on-secondary-container": "#684000",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#2a1700",
+                        "primary-container": "#f97316",
+                        "secondary-fixed": "#ffddb8",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#fea619",
+                        "primary": "#9d4300",
+                        "tertiary-container": "#e77e5c",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-surface": "#0b1c30"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "3xl": "64px",
+                        "2xl": "48px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased relative">
+<!-- Decorative Background using provided image reference -->
+<div class="fixed inset-0 z-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDj8-mW8N_7Icwhw1SqE3Mw5YWzzS3Kqfw8jvT8kXCz2DhoxDb65DovgydE-hedGRXJNv9kA83S5yLPh-cvlXHE4fzGmFvkRO2EZp65VKH5_v7IMcWyz1bHb8P5RIHMZrMOgPnoQs0049jkm9O7oNnaj8K8QzOJcRCVv_IuMQesEunk2RzMX_9pS8Qff1c7hp2eqX-oYg5GzSz4dGOxLCqdVpjXjELc_2peqFejt-p2j096E_xnlG4BlGpoTWIi1VoVmO_LXmlumSw'); background-size: cover; background-position: center; mix-blend-mode: multiply;"></div>
+<!-- Navigation suppressed as this is a focused task/input screen -->
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center p-gutter relative z-10 w-full max-w-container-max mx-auto my-2xl">
+<div class="w-full max-w-2xl bg-surface-container-lowest rounded-xl p-2xl lifted-shadow relative overflow-hidden">
+<!-- Header -->
+<div class="text-center mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tighter mb-sm">StudyFlow AI</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Convert assignments into actionable study plans</p>
+</div>
+<!-- Form -->
+<form class="space-y-lg">
+<!-- Assignment Title -->
+<div class="space-y-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="assignment-title">Assignment Title</label>
+<input class="w-full bg-surface text-on-surface font-body-md text-body-md rounded-lg p-md border-transparent recessed-input focus:border-primary-container focus:ring-0 transition-colors duration-200 outline-none" id="assignment-title" placeholder="e.g. History essay on World War II" type="text"/>
+</div>
+<!-- Assignment Description -->
+<div class="space-y-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="assignment-description">Assignment Description</label>
+<textarea class="w-full bg-surface text-on-surface font-body-md text-body-md rounded-lg p-md border-transparent recessed-input focus:border-primary-container focus:ring-0 transition-colors duration-200 outline-none resize-y" id="assignment-description" placeholder="Describe your assignment in detail..." rows="4"></textarea>
+</div>
+<!-- Due Date -->
+<div class="space-y-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="due-date">Due Date</label>
+<div class="relative">
+<input class="w-full bg-surface text-on-surface font-body-md text-body-md rounded-lg p-md pl-12 border-transparent recessed-input focus:border-primary-container focus:ring-0 transition-colors duration-200 outline-none appearance-none cursor-pointer" id="due-date" type="date"/>
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">calendar_month</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-md">
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md text-headline-md py-md px-lg rounded-xl lifted-shadow hover:shadow-[5px_5px_20px_rgba(249,115,22,0.15),-5px_-5px_15px_#FFFFFF] active:recessed-shadow active:bg-primary transition-all duration-200 flex items-center justify-center gap-sm group" type="button">
+<span class="material-symbols-outlined group-hover:rotate-12 transition-transform duration-200">auto_awesome</span>
+                        Generate Plan
+                    </button>
+</div>
+</form>
+<!-- Subtle Decorative Elements -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-container/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="absolute -bottom-10 -left-10 w-32 h-32 bg-secondary-container/5 rounded-full blur-2xl pointer-events-none"></div>
+</div>
+</main>
+<script>
+        // Micro-interaction for input focus effects
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('opacity-100');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('opacity-100');
+            });
+        });
+    </script>
+</body></html>

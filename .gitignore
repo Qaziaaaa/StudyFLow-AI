@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files — never commit these
+.env
+.env.local
+.env.*.local
+
+# Test coverage
+coverage/
+
+# Vite / TypeScript cache
+*.local
+.tsbuildinfo
+
+# Kiro IDE files
+.kiro/
+
+# OS
+.DS_Store
+Thumbs.db

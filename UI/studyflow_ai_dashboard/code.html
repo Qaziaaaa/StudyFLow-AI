@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StudyFlow AI - Your Study Plan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#9d4300",
+                        "on-surface-variant": "#584237",
+                        "surface": "#f8f9ff",
+                        "on-primary-container": "#582200",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "surface-container-low": "#eff4ff",
+                        "outline-variant": "#e0c0b1",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-tertiary-fixed-variant": "#7c2d12",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary": "#855300",
+                        "primary-fixed": "#ffdbca",
+                        "on-background": "#0b1c30",
+                        "outline": "#8c7164",
+                        "on-primary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#783200",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#ffb690",
+                        "on-tertiary-container": "#611901",
+                        "inverse-surface": "#213145",
+                        "surface-dim": "#cbdbf5",
+                        "primary-fixed-dim": "#ffb690",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "tertiary": "#9b4427",
+                        "on-secondary-container": "#684000",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#2a1700",
+                        "primary-container": "#f97316",
+                        "secondary-fixed": "#ffddb8",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#fea619",
+                        "primary": "#9d4300",
+                        "tertiary-container": "#e77e5c",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-surface": "#0b1c30"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "3xl": "64px",
+                        "2xl": "48px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+        }
+        
+        .neumorphic-lifted {
+            background-color: #FFFFFF;
+            box-shadow: -5px -5px 10px #FFFFFF, 5px 5px 15px rgba(249, 115, 22, 0.08);
+            border-radius: theme('borderRadius.xl');
+        }
+        
+        .neumorphic-recessed {
+            background-color: theme('colors.surface');
+            box-shadow: inset -5px -5px 10px #FFFFFF, inset 5px 5px 15px rgba(249, 115, 22, 0.08);
+            border-radius: theme('borderRadius.lg');
+        }
+
+        .btn-primary {
+            background-color: theme('colors.primary');
+            color: theme('colors.on-primary');
+            box-shadow: -3px -3px 6px #FFFFFF, 3px 3px 10px rgba(249, 115, 22, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: -5px -5px 10px #FFFFFF, 5px 5px 15px rgba(249, 115, 22, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            box-shadow: inset -3px -3px 6px rgba(255, 255, 255, 0.5), inset 3px 3px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(1px);
+        }
+
+        .pulse-red {
+            animation: pulse-red-anim 2s infinite;
+        }
+
+        @keyframes pulse-red-anim {
+            0% { box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(186, 26, 26, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(186, 26, 26, 0); }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<nav class="bg-surface dark:bg-surface-container-low shadow-[5px_5px_15px_rgba(249,115,22,0.08),-5px_-5px_10px_#FFFFFF] w-full px-gutter py-md sticky top-0 z-50">
+<div class="flex justify-between items-center max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="font-display-lg text-display-lg font-black text-primary tracking-tighter">
+                StudyFlow AI
+            </div>
+<!-- Desktop Nav -->
+<div class="hidden md:flex gap-lg items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">My Plans</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">History</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Resources</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full neumorphic-lifted flex items-center justify-center text-primary hover:text-primary transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden neumorphic-lifted border-2 border-surface">
+<img alt="User profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXi0eTfgIBCnH3qru03QZlkcuoR0J3o0WvponPxx6nxpFeVJiLM1ftUZ6AsDnDl6ybEK5r2Oavt85t0DfTwHkUIhJF-0jPsx-Pc7BCmGvDZnynWu8gWYXO8AYKsACMwSYFQUKawSx6gDTpv68G4vLnNdI3J5wXnHIlQvaudMfT_yc5_Ks28YDxcAks9ekTdZShEFlbY6fuqBLLKUl6Z9tn6ju-Q7Ln5fpOX5I92ZgTliP6q-r8RISbf9eki7PWDOP_ikLTVw97FtA"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-2xl gap-xl flex flex-col">
+<!-- Header -->
+<header class="mb-lg">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Your Study Plan</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">Here is your generated roadmap to success.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-xl">
+<!-- Left Column: Context & Summary -->
+<div class="md:col-span-4 flex flex-col gap-xl">
+<!-- Input Details (Collapsed) -->
+<div class="neumorphic-lifted p-lg">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Assignment Details</h2>
+<button class="text-primary active:scale-95 transition-transform"><span class="material-symbols-outlined">edit</span></button>
+</div>
+<div class="space-y-md">
+<div class="neumorphic-recessed p-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Title</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">History 101 Final Term Paper</span>
+</div>
+<div class="neumorphic-recessed p-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">Due Date</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">Oct 24, 2024</span>
+</div>
+</div>
+</div>
+<!-- Plan Summary -->
+<div class="neumorphic-lifted p-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-fixed rounded-bl-full opacity-20 pointer-events-none"></div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-lg">Plan Summary</h2>
+<div class="grid grid-cols-2 gap-md">
+<div class="neumorphic-recessed p-md flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-xs" data-icon="timer">timer</span>
+<span class="font-headline-md text-headline-md text-primary">6h</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Est. Time</span>
+</div>
+<div class="neumorphic-recessed p-md flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-xs" data-icon="task">task</span>
+<span class="font-headline-md text-headline-md text-primary">5</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tasks</span>
+</div>
+</div>
+<div class="mt-lg flex items-center justify-between neumorphic-recessed p-md">
+<span class="font-label-md text-label-md text-on-surface">Priority</span>
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 rounded-full bg-error pulse-red"></div>
+<span class="font-label-md text-label-md text-error font-bold">High</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Schedule & Breakdown -->
+<div class="md:col-span-8 flex flex-col gap-xl">
+<!-- Day Schedule Focus -->
+<div class="neumorphic-lifted p-lg border-l-4 border-primary">
+<div class="flex justify-between items-center mb-md">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold">Current Focus</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Day 1: Research &amp; Outline</h2>
+</div>
+<span class="font-label-md text-label-md bg-primary-container text-on-primary-container px-sm py-xs rounded-md">2h 30m</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">Gather primary sources and establish the core thesis structure.</p>
+<!-- Progress bar -->
+<div class="w-full bg-surface-container-high rounded-full h-2 mb-2 neumorphic-recessed overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 30%"></div>
+</div>
+<div class="text-right font-label-sm text-label-sm text-on-surface-variant">30% Complete</div>
+</div>
+<!-- Tasks Breakdown List -->
+<div class="neumorphic-lifted p-lg flex-grow">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-lg">Task Breakdown</h2>
+<div class="flex flex-col gap-md">
+<!-- Task Item 1 -->
+<div class="flex items-start gap-md p-md neumorphic-recessed hover:bg-surface-bright transition-colors rounded-lg group">
+<div class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center font-bold flex-shrink-0 neumorphic-lifted">1</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Select Topic &amp; Thesis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs">Finalize the specific historical event to analyze.</p>
+</div>
+<div class="flex flex-col items-end gap-xs flex-shrink-0">
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface px-2 py-1 rounded">30 min</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Easy</span>
+</div>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-start gap-md p-md neumorphic-recessed hover:bg-surface-bright transition-colors rounded-lg group">
+<div class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center font-bold flex-shrink-0 neumorphic-lifted">2</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Gather Primary Sources</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs">Find at least 3 peer-reviewed articles.</p>
+</div>
+<div class="flex flex-col items-end gap-xs flex-shrink-0">
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface px-2 py-1 rounded">1 hr</span>
+<span class="font-label-sm text-label-sm text-error font-bold">Hard</span>
+</div>
+</div>
+<!-- Task Item 3 -->
+<div class="flex items-start gap-md p-md neumorphic-recessed hover:bg-surface-bright transition-colors rounded-lg group">
+<div class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center font-bold flex-shrink-0 neumorphic-lifted">3</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Create Rough Outline</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs">Structure the intro, body paragraphs, and conclusion.</p>
+</div>
+<div class="flex flex-col items-end gap-xs flex-shrink-0">
+<span class="font-label-sm text-label-sm bg-surface-variant text-on-surface px-2 py-1 rounded">1 hr</span>
+<span class="font-label-sm text-label-sm text-secondary-container font-bold">Medium</span>
+</div>
+</div>
+</div>
+<div class="mt-lg flex justify-end">
+<button class="btn-primary font-label-md text-label-md px-lg py-sm rounded-lg flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                            Start Day 1
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant dark:border-outline w-full py-xl mt-3xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-gutter max-w-container-max mx-auto gap-lg">
+<div class="font-headline-md text-headline-md font-bold text-on-surface">
+                StudyFlow AI
+            </div>
+<div class="flex gap-lg opacity-80 hover:opacity-100 transition-opacity">
+<a class="text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors font-label-md text-label-md" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors font-label-md text-label-md" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors font-label-md text-label-md" href="#">Help Center</a>
+<a class="text-on-surface-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors font-label-md text-label-md" href="#">Contact</a>
+</div>
+<div class="font-label-md text-label-md text-primary dark:text-primary-fixed">
+                © 2024 StudyFlow AI. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

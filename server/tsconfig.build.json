@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "outDir": "./dist",
+    "paths": {
+      "@studyflow/shared": ["../shared/types.ts"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["src/**/*", "../shared/**/*"],
+  "exclude": ["node_modules", "dist", "tests"]
+}
