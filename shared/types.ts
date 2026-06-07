@@ -3,9 +3,12 @@
 export type Priority = "High" | "Medium" | "Low";
 
 export interface AssignmentInput {
-  title: string;       // max 255 chars
-  description: string; // max 2000 chars
-  dueDate: string;     // ISO 8601 date string (YYYY-MM-DD)
+  title: string;
+  description: string;
+  dueDate: string;
+  subject?: string;
+  wordCount?: number;
+  assignmentType?: string;
 }
 
 export interface Task {
@@ -15,22 +18,25 @@ export interface Task {
 }
 
 export interface ScheduleEntry {
-  day: string;      // "Day 1", "Day 2", ...
-  activity: string; // task name(s) or empty string
+  day: string;
+  activity: string;
 }
 
 export interface StudyPlan {
   summary: string;
   difficulty: "Easy" | "Medium" | "Hard";
   priority: Priority;
-  tasks: Task[];          // at least 1 element
-  schedule: ScheduleEntry[]; // at least 1 element
+  tasks: Task[];
+  schedule: ScheduleEntry[];
 }
 
 export interface GeneratePlanRequest {
   title: string;
   description: string;
-  dueDate: string; // ISO 8601 date string
+  dueDate: string;
+  subject?: string;
+  wordCount?: number;
+  assignmentType?: string;
 }
 
 export interface GeneratePlanResponse {
@@ -39,5 +45,6 @@ export interface GeneratePlanResponse {
 
 export interface ErrorResponse {
   error: string;
-  fields?: string[]; // populated for 400 validation errors
+  fields?: string[];
+  code?: "junk_input" | "validation_failed" | "upstream_error" | "server_error";
 }

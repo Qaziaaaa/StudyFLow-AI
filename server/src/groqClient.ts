@@ -10,9 +10,6 @@ export interface GroqClientResult {
   rawText: string;
 }
 
-/**
- * Typed error thrown when the Groq API returns a non-2xx response.
- */
 export class GroqApiError extends Error {
   constructor(
     public readonly statusCode: number | undefined,
@@ -23,71 +20,58 @@ export class GroqApiError extends Error {
   }
 }
 
-/**
- * System prompt that instructs the Llama 3 model to respond with a JSON object
- * matching the prompt schema contract used by the StudyFlow backend.
- *
- * The backend fills `priority` and `schedule` after parsing this response, so
- * the model is not asked to produce those fields.
- */
-export const GROQ_SYSTEM_PROMPT = `You are an expert academic study planner. Your job is to read a student's assignment details and produce a concrete, subject-specific study plan.
+export const GROQ_SYSTEM_PROMPT = `You are a friendly, practical academic study planner. A student has given you their assignment details. Your job is to create a realistic, specific study plan that a real student would actually follow.
 
-IMPORTANT — Input quality rules:
-- If the title or description is gibberish, too short (under 10 meaningful characters), or clearly not a real assignment (e.g. "jojo", "sdjsd", "test"), respond with a summary that says: "The assignment details provided are too vague to generate a meaningful study plan. Please enter a real assignment title and description." and return exactly 3 generic tasks named "Re-read the assignment brief", "Clarify requirements with your instructor", "Draft an initial plan". Set difficulty to "Easy".
-- Otherwise, generate a fully specific plan tailored to the actual subject matter.
+TONE: Be practical. Students in the AI era are smart — they use tools, they work efficiently. Don't pad estimates. A 500-word essay does NOT take 10 hours. Be honest and realistic.
 
-The JSON object MUST conform exactly to this schema:
+TIME CALIBRATION (use these as your guide):
+- 500-word essay: total ~2–3 hours across all tasks
+- 1000-word essay: total ~4–5 hours
+- 2000-word essay: total ~7–8 hours
+- Short coding project: total ~3–6 hours depending on complexity
+- Presentation (10 slides): total ~2–4 hours
+- Problem set / worksheet: total ~1–3 hours
+- Report with research: total ~5–10 hours
+- Each individual task should take 20–90 minutes. Nothing over 2 hours per task.
+
+TASK RULES:
+- Be SPECIFIC to the actual subject and assignment. Use the real topic name in every task.
+- Good example: "Jot down 3 key causes of WW2 from memory" (for a history essay)
+- Bad example: "Research the topic" (too vague)
+- Good: "Write the intro paragraph — hook + thesis statement" 
+- Bad: "Write introduction"
+- 4–6 tasks total. Not more. Keep it doable.
+- Order: understand → plan/outline → draft/execute → review/polish
+- Each task name starts with an action verb.
+
+Return ONLY this JSON (no markdown, no explanation):
 {
-  "summary": "<1–2 sentences describing specifically what this assignment requires the student to produce, in plain language>",
-  "difficulty": "<exactly one of: Easy | Medium | Hard>",
+  "summary": "<1 clear sentence: what the student needs to produce and the key challenge>",
+  "difficulty": "<Easy | Medium | Hard>",
   "tasks": [
     {
-      "name": "<specific, actionable task directly related to this assignment — e.g. 'Research causes of World War 1', 'Write the introduction paragraph', 'Solve practice integration problems'>",
-      "estimatedHours": <realistic number: 0.5 to 3>,
-      "difficulty": "<exactly one of: Easy | Medium | Hard>"
+      "name": "<specific action + topic>",
+      "estimatedHours": <0.3 to 2.0, realistic>,
+      "difficulty": "<Easy | Medium | Hard>"
     }
   ]
 }
 
-Task quality rules:
-- Tasks must be SPECIFIC to the assignment subject — never generic like "Read Description" or "Analyze Requirements"
-- Use the actual topic in task names: e.g. "Research the French Revolution", not "Research the topic"
-- 4 to 7 tasks, each representing one focused study session of 0.5–3 hours
-- Tasks should follow a logical order: research → outline → draft → revise → review
-- Each task name starts with an action verb
+Do NOT include priority or schedule fields.`;
 
-Output rules:
-- Return ONLY the raw JSON object — no markdown fences, no explanation
-- "difficulty", "tasks[].difficulty" must be exactly "Easy", "Medium", or "Hard"
-- Do NOT include "priority" or "schedule" fields`;
-
-// Lazily initialised Groq SDK client so the module can be imported in tests
-// without requiring GROQ_API_KEY to be present at import time.
 let _groqClient: Groq | null = null;
 
 function getGroqClient(): Groq {
   if (!_groqClient) {
     const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      throw new Error("GROQ_API_KEY environment variable is not set");
-    }
+    if (!apiKey) throw new Error("GROQ_API_KEY environment variable is not set");
     _groqClient = new Groq({ apiKey });
   }
   return _groqClient;
 }
 
-/**
- * Calls the Groq API with `response_format: { type: "json_object" }` for
- * reliable JSON output.  Throws `GroqApiError` on non-2xx responses.
- *
- * @param options - model, system prompt and user message to send
- * @returns rawText - the model's raw JSON string
- */
-export async function callGroq(
-  options: GroqClientOptions
-): Promise<GroqClientResult> {
+export async function callGroq(options: GroqClientOptions): Promise<GroqClientResult> {
   const { model, systemPrompt, userMessage } = options;
-
   try {
     const completion = await getGroqClient().chat.completions.create({
       model,
@@ -97,19 +81,13 @@ export async function callGroq(
       ],
       response_format: { type: "json_object" },
     });
-
     const rawText = completion.choices[0]?.message?.content ?? "";
     return { rawText };
   } catch (err) {
-    // Re-throw API errors as our typed GroqApiError
     if (err instanceof APIError) {
-      console.error("[GroqClient] APIError:", err.status, err.message, err.error);
-      throw new GroqApiError(
-        err.status,
-        `Upstream Groq API error: ${err.status ?? "unknown status"}`
-      );
+      console.error("[GroqClient] APIError:", err.status, err.message);
+      throw new GroqApiError(err.status, `Upstream Groq API error: ${err.status ?? "unknown"}`);
     }
-    // Propagate any other unexpected errors unchanged
     console.error("[GroqClient] Unexpected error:", err);
     throw err;
   }

@@ -1,12 +1,15 @@
 // Types shared between client and server
-// This file is a copy of shared/types.ts inlined for the client build.
 
 export type Priority = "High" | "Medium" | "Low";
 
 export interface AssignmentInput {
-  title: string;       // max 255 chars
-  description: string; // max 2000 chars
-  dueDate: string;     // ISO 8601 date string (YYYY-MM-DD)
+  title: string;
+  description: string;
+  dueDate: string;
+  // Optional extra context
+  subject?: string;         // e.g. "History", "Maths", "Computer Science"
+  wordCount?: number;       // expected word count if it's a writing task
+  assignmentType?: string;  // e.g. "Essay", "Report", "Presentation", "Coding project"
 }
 
 export interface Task {
@@ -16,8 +19,8 @@ export interface Task {
 }
 
 export interface ScheduleEntry {
-  day: string;      // "Day 1", "Day 2", ...
-  activity: string; // task name(s) or empty string
+  day: string;
+  activity: string;
 }
 
 export interface StudyPlan {
@@ -32,6 +35,9 @@ export interface GeneratePlanRequest {
   title: string;
   description: string;
   dueDate: string;
+  subject?: string;
+  wordCount?: number;
+  assignmentType?: string;
 }
 
 export interface GeneratePlanResponse {
@@ -41,4 +47,5 @@ export interface GeneratePlanResponse {
 export interface ErrorResponse {
   error: string;
   fields?: string[];
+  code?: "junk_input" | "validation_failed" | "upstream_error" | "server_error";
 }

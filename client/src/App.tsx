@@ -22,19 +22,16 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+
       if (res.ok) {
         const json = await res.json();
         setPlan(json.studyPlan as StudyPlan);
-      } else if (res.status === 400) {
-        const json: ErrorResponse = await res.json();
-        setError(json.error ?? "Validation error – please check your inputs.");
-      } else if (res.status === 502) {
-        setError("Could not reach the AI service. Please try again.");
       } else {
-        setError(`Something went wrong (${res.status}). Please try again.`);
+        const json: ErrorResponse = await res.json().catch(() => ({ error: "Unexpected error." }));
+        setError(json.error ?? "Something went wrong. Please try again.");
       }
     } catch {
-      setError("Network error – please check your connection and try again.");
+      setError("Network error — please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -54,11 +51,12 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main */}
-      <main className="max-w-2xl mx-auto px-6 py-10 space-y-6">
+      <main className="max-w-2xl mx-auto px-6 py-8 space-y-5">
         <div>
           <h1 className="text-2xl font-bold text-navy-800">Generate your study plan</h1>
-          <p className="text-slate-500 mt-1 text-sm">Describe your assignment and we'll build a step-by-step plan tailored to it.</p>
+          <p className="text-slate-500 mt-1 text-sm">
+            Tell us about your assignment and we'll build a practical, step-by-step plan.
+          </p>
         </div>
 
         <AssignmentForm onSubmit={handleSubmit} isLoading={isLoading} />
