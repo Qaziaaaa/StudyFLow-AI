@@ -185,7 +185,11 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
               { label: "Avg / day",   value: activeDays > 0 ? formatHours(avgHrsPerDay) : "—", icon: <Icons.Calendar size={20} color="#0369a1" />, bg: "#f0f9ff", border: "#bae6fd" },
             ].map(stat => (
               <div key={stat.label} className="rounded-xl p-3 text-center"
-                style={{ background: stat.bg, border: `1px solid ${stat.border}`, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                style={{
+                  background: stat.bg,
+                  border: `1.5px solid ${stat.border}`,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.8) inset",
+                }}>
                 <div className="flex justify-center mb-1.5">{stat.icon}</div>
                 <div className="text-lg font-bold text-slate-900">{stat.value}</div>
                 <div className="text-xs text-slate-500 mt-0.5">{stat.label}</div>
@@ -228,13 +232,17 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
               <div key={entry.day}
                 className="rounded-xl overflow-hidden"
                 style={{
-                  border: isFirst ? "1.5px solid #c7d2fe"
-                        : isLast  ? "1.5px solid #86efac"
-                        : isBuffer ? "1px solid #f1f5f9"
-                        : "1px solid #e2e8f0",
-                  boxShadow: isFirst || isLast
-                    ? "0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.8) inset"
-                    : "0 1px 3px rgba(0,0,0,0.04)",
+                  border: isFirst ? "2px solid #a5b4fc"
+                        : isLast  ? "2px solid #6ee7b7"
+                        : isBuffer ? "1.5px solid #e2e8f0"
+                        : "1.5px solid #cbd5e1",
+                  boxShadow: isFirst
+                    ? "0 2px 8px rgba(99,102,241,0.12), 0 8px 24px rgba(99,102,241,0.08), 0 0 0 1px rgba(255,255,255,0.8) inset"
+                    : isLast
+                    ? "0 2px 8px rgba(22,163,74,0.12), 0 8px 24px rgba(22,163,74,0.08), 0 0 0 1px rgba(255,255,255,0.8) inset"
+                    : isBuffer
+                    ? "0 1px 3px rgba(0,0,0,0.04)"
+                    : "0 1px 4px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.8) inset",
                 }}>
 
                 {/* Day header row */}
@@ -373,7 +381,7 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
           </div>
         </div>
 
-        <ul className="px-4 py-3 space-y-2">
+        <ul className="px-4 py-3 space-y-2.5">
           {plan.tasks.map((task, i) => {
             const { phase, task: taskName } = parsePhase(task.name);
             const ps = phaseStyle(phase);
@@ -381,18 +389,31 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
 
             return (
               <li key={`${task.name}-${i}`}
-                className="flex items-start gap-3 rounded-xl p-3.5 transition-colors"
+                className="flex items-start gap-3 rounded-xl p-4 transition-all"
                 style={{
-                  border: "1px solid #f1f5f9",
+                  border: "1.5px solid #e2e8f0",
                   background: "#ffffff",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05), 0 0 0 1px rgba(255,255,255,0.9) inset",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
-                onMouseLeave={e => (e.currentTarget.style.background = "#ffffff")}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "#f8fafc";
+                  e.currentTarget.style.borderColor = "#c7d2fe";
+                  e.currentTarget.style.boxShadow = "0 2px 6px rgba(0,0,0,0.07), 0 8px 20px rgba(79,70,229,0.07), 0 0 0 1px rgba(255,255,255,0.9) inset";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "#ffffff";
+                  e.currentTarget.style.borderColor = "#e2e8f0";
+                  e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05), 0 0 0 1px rgba(255,255,255,0.9) inset";
+                }}
               >
                 {/* Step number */}
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
-                  style={{ background: "#f1f5f9", color: "#475569", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+                  style={{
+                    background: "linear-gradient(135deg, #f8fafc, #f1f5f9)",
+                    color: "#334155",
+                    border: "1.5px solid #cbd5e1",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8) inset",
+                  }}>
                   {i + 1}
                 </div>
 
@@ -407,10 +428,14 @@ export function ResultsSection({ plan, error, visible }: ResultsSectionProps) {
                 </div>
 
                 <div className="flex flex-col items-end gap-1.5 flex-shrink-0 ml-2">
-                  <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1"
-                    style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-                    <Icons.Clock size={11} color="#64748b" />
-                    <span className="text-xs font-semibold text-slate-600">{formatHours(task.estimatedHours)}</span>
+                  <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5"
+                    style={{
+                      background: "#f0f4ff",
+                      border: "1.5px solid #c7d2fe",
+                      boxShadow: "0 1px 3px rgba(79,70,229,0.08)",
+                    }}>
+                    <Icons.Clock size={11} color="#6366f1" />
+                    <span className="text-xs font-bold text-indigo-700">{formatHours(task.estimatedHours)}</span>
                   </div>
                   <span aria-label={`Task difficulty: ${task.difficulty}`} className={`badge ${tDiffCls}`}>
                     {task.difficulty}
